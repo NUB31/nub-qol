@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.nubqol.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "easyElytraLaunch.FireworkRocketItemMixin",
+    "easyElytraLaunch.MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

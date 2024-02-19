@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "nub-qol",
+  "version": "${version}",
+  "name": "NUB's QoL Mods",
+  "description": "Small quality of life changes to make vanilla minecraft a little better",
+  "authors": [
+    "NUB31"
+  ],
+  "contact": {
+    "homepage": "https://oliste.no/",
+    "sources": "https://github.com/nub31/nubs-qol"
+  },
+  "license": "MIT",
+  "icon": "assets/nub-qol/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.nubqol.NubQol"
+    ],
+    "client": [
+      "com.nubqol.NubQolClient"
+    ],
+    "modmenu": [
+      "com.nubqol.config.ModMenu"
+    ]
+  },
+  "mixins": [
+    "nub-qol.mixins.json",
+    {
+      "config": "nub-qol.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.7",
+    "minecraft": "~1.20.4",
+    "java": ">=17",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
