@@ -43,7 +43,7 @@ abstract class MinecraftClientMixin {
 	// Redirect attacks to mobs if a mob is present in a non-solid block
 	@Inject(at = @At("HEAD"), method = "doAttack")
 	private void doAttack(CallbackInfoReturnable<Boolean> cir) {
-		if (!NubQolClient.CONFIG.hitMobsThroughTransparentBlocksEnabled.get()) return;
+		if (!NubQolClient.CONFIG.hitMobsThroughTransparentBlocksEnabled.value()) return;
 
 		skipBlockBreaking = false;
 

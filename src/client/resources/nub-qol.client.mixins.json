@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "easyElytraLaunch.FireworkRocketItemMixin",
-    "easyElytraLaunch.MinecraftClientMixin"
+    "easyElytraLaunch.MinecraftClientMixin",
+    "hitMobsThroughTransparentBlocks.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

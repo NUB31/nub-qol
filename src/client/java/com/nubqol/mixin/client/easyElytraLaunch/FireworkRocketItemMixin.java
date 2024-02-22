@@ -6,7 +6,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -27,14 +26,12 @@ abstract class FireworkRocketItemMixin {
 
 	@Unique
 	private void clientHandler(ClientWorld world, ClientPlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
-		if (!NubQolClient.CONFIG.easyElytraLaunchEnabled.get()) return;
+		if (!NubQolClient.CONFIG.easyElytraLaunchEnabled.value()) return;
 
 		if (player.isOnGround()) {
 			player.jump();
 		}
 
-		if (!NubQolClient.hasEelServerSupport) {
-			player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
-		}
+//		player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
 	}
 }

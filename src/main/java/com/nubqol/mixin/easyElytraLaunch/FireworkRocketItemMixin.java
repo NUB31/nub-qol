@@ -1,6 +1,7 @@
 package com.nubqol.mixin.easyElytraLaunch;
 
 import com.nubqol.NubQol;
+import com.nubqol.config.ModConfig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
@@ -26,12 +27,8 @@ abstract class FireworkRocketItemMixin {
 
 	@Unique
 	private void serverHandler(ServerWorld world, ServerPlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
-		Boolean eelEnabled = NubQol.USER_EEL_ENABLED.get(player.getUuid());
-		NubQol.LOGGER.info(NubQol.USER_EEL_ENABLED.toString());
-
-		if (eelEnabled == null || !eelEnabled) {
-			return;
-		}
+		ModConfig config = NubQol.CONFIG_SYNC.configs.get(player.getUuid());
+		if (config == null || !config.easyElytraLaunchEnabled.value()) return;
 
 		if (!player.isFallFlying()) {
 			player.startFallFlying();
