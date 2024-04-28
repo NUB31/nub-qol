@@ -31,7 +31,7 @@ abstract class MinecraftClientMixin {
 	// If using firework rockets and targeting a non-solid block, ignore the non-solid block
 	@Redirect(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/hit/HitResult;getType()Lnet/minecraft/util/hit/HitResult$Type;"))
 	private HitResult.Type getType(HitResult instance) {
-		if (!NubQolClient.CONFIG.easyElytraLaunchEnabled.value()) return instance.getType();
+		if (!NubQolClient.CONFIG.easyElytraLaunchEnabled.get()) return instance.getType();
 
 		if (this.world == null || this.player == null || this.crosshairTarget == null) {
 			return instance.getType();

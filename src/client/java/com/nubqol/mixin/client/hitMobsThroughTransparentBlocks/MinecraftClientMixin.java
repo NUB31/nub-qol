@@ -43,7 +43,7 @@ abstract class MinecraftClientMixin {
 	// Redirect attacks to mobs if a mob is present in a non-solid block
 	@Inject(at = @At("HEAD"), method = "doAttack")
 	private void doAttack(CallbackInfoReturnable<Boolean> cir) {
-		if (!NubQolClient.CONFIG.hitMobsThroughTransparentBlocksEnabled.value()) return;
+		if (!NubQolClient.CONFIG.hitMobsThroughTransparentBlocksEnabled.get()) return;
 
 		skipBlockBreaking = false;
 
@@ -56,7 +56,7 @@ abstract class MinecraftClientMixin {
 			PlayerUtils playerUtils = new PlayerUtils(this.player);
 
 			if (this.world.isClient && blockHelper.isSolid(this.crosshairTarget)) {
-				Entity mobInPlayerRange = playerUtils.findMobInPlayerCrosshair(this.world, this.interactionManager);
+				Entity mobInPlayerRange = playerUtils.findMobInPlayerCrosshair(this.world, this.player);
 
 				if (mobInPlayerRange != null) {
 					skipBlockBreaking = true;

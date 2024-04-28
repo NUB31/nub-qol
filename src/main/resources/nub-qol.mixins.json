@@ -3,7 +3,6 @@
   "package": "com.nubqol.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "easyElytraLaunch.FireworkRocketItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

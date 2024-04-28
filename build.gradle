@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.5-SNAPSHOT'
+	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -38,7 +38,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modApi files("libs/nub-lib-${nub_lib_version}.jar")
-	modApi "com.terraformersmc:modmenu:9.0.0"
+	modApi "com.terraformersmc:modmenu:${project.mod_menu_version}"
 }
 
 processResources {

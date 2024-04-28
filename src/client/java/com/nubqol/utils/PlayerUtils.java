@@ -1,6 +1,8 @@
 package com.nubqol.utils;
 
-import net.minecraft.client.network.ClientPlayerInteractionManager;
+import com.nubqol.NubQol;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Tameable;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,7 +14,6 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import net.minecraft.world.World;
 
 import java.util.Objects;
 
@@ -27,8 +28,10 @@ public class PlayerUtils {
 		return (player.getStackInHand(Hand.MAIN_HAND).getItem() == item || player.getStackInHand(Hand.OFF_HAND).getItem() == item);
 	}
 
-	public Entity findMobInPlayerCrosshair(World world, ClientPlayerInteractionManager interactionManager) {
-		float playerReachDistance = interactionManager.getReachDistance();
+	public Entity findMobInPlayerCrosshair(ClientWorld world, ClientPlayerEntity player) {
+		double playerReachDistance = player.getEntityInteractionRange();
+
+		NubQol.LOGGER.info("" + playerReachDistance);
 
 		Vec3d camera = player.getCameraPosVec(1.0F);
 		Vec3d rotation = player.getRotationVec(1.0F);

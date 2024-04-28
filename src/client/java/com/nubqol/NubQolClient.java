@@ -1,13 +1,13 @@
 package com.nubqol;
 
-import com.nublib.config.provider.ConfigProvider;
-import com.nublib.config.provider.FileConfigProvider;
+import com.nublib.config.provider.IStorageProvider;
+import com.nublib.config.provider.impl.FileStorageProvider;
 import com.nubqol.config.ModConfig;
 import net.fabricmc.api.ClientModInitializer;
 
 public class NubQolClient implements ClientModInitializer {
-	public static final ConfigProvider CONFIG_PROVIDER = FileConfigProvider.create(NubQol.MOD_ID);
-	public static final ModConfig CONFIG = new ModConfig(CONFIG_PROVIDER, NubQol.MOD_ID);
+	public static final IStorageProvider CONFIG_PROVIDER = FileStorageProvider.create(NubQol.MOD_ID);
+	public static final ModConfig CONFIG = new ModConfig(CONFIG_PROVIDER);
 
 	@Override
 	public void onInitializeClient() {
