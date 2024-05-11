@@ -1,16 +1,14 @@
 package com.nubqol.config;
 
 import com.nublib.config.Config;
-import com.nublib.config.annotation.ConfigOptionMetadata;
-import com.nublib.config.option.BooleanConfigOption;
+import com.nublib.config.entry.ClientToggleConfigEntry;
 import com.nublib.config.provider.IStorageProvider;
+import net.minecraft.text.Text;
 
 public class ModConfig extends Config {
-	@ConfigOptionMetadata(title = "Easy elytra launch enabled", description = "Lets the player right click with a rocket when standing on the ground or falling, to start elytra flight")
-	public final BooleanConfigOption easyElytraLaunchEnabled = new BooleanConfigOption("easyElytraLaunchEnabled", true, storageProvider);
-	
-	@ConfigOptionMetadata(title = "Hit mobs through blocks enabled", description = "Lets the player hit mobs through non-solid blocks such as grass, tall grass, sugar cane etc.")
-	public final BooleanConfigOption hitMobsThroughTransparentBlocksEnabled = new BooleanConfigOption("hitMobsThroughTransparentBlocksEnabled", true, storageProvider);
+	public final ClientToggleConfigEntry easyElytraLaunchEnabled = new ClientToggleConfigEntry(storageProvider, "easyElytraLaunchEnabled", true, Text.literal("Easy elytra launch"), Text.literal("Allows you to take off with an elytra without first leaving the ground and entering flight mode"));
+
+	public final ClientToggleConfigEntry hitMobsThroughTransparentBlocksEnabled = new ClientToggleConfigEntry(storageProvider, "hitMobsThroughTransparentBlocksEnabled", true, Text.literal("Hit mobs through transparent blocks"), Text.literal("Allows you to hit mobs through non-solid blocks such as sugar cane, tall/non-tall grass, vines etc."));
 
 	public ModConfig(IStorageProvider storageProvider) {
 		super(storageProvider);

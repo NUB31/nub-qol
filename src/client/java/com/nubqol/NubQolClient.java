@@ -1,7 +1,7 @@
 package com.nubqol;
 
+import com.nublib.config.provider.FileStorageProvider;
 import com.nublib.config.provider.IStorageProvider;
-import com.nublib.config.provider.impl.FileStorageProvider;
 import com.nubqol.config.ModConfig;
 import net.fabricmc.api.ClientModInitializer;
 

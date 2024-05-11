@@ -1,12 +1,17 @@
 package com.nubqol.config;
 
-import com.nublib.config.Config;
-import com.nublib.config.modmenu.ModMenuIntegration;
+import com.nublib.gui.ConfigScreenBuilder;
 import com.nubqol.NubQolClient;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
+import net.minecraft.text.Text;
 
-public class ModMenu implements ModMenuIntegration {
+public class ModMenu implements ModMenuApi {
 	@Override
-	public Config getConfig() {
-		return NubQolClient.CONFIG;
+	public ConfigScreenFactory<?> getModConfigScreenFactory() {
+		return screen -> new ConfigScreenBuilder(screen)
+				.fromConfig(Text.literal("Nub's QoL Options"), NubQolClient.CONFIG)
+				.onSave(NubQolClient.CONFIG::save)
+				.build();
 	}
 }
