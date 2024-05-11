@@ -3,10 +3,13 @@ package com.nubqol.mixin.client.easyElytraLaunch;
 import com.nubqol.NubQolClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ElytraItem;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -31,12 +34,15 @@ abstract class FireworkRocketItemMixin {
 		if (!NubQolClient.CONFIG.easyElytraLaunchEnabled.get()) return;
 
 		if (!player.isFallFlying() && !player.isTouchingWater() && !player.hasStatusEffect(StatusEffects.LEVITATION)) {
-			if (player.isOnGround()) {
-				player.jump();
-				player.tick();
-			}
+			ItemStack itemStack = player.getEquippedStack(EquipmentSlot.CHEST);
+			if (itemStack.isOf(Items.ELYTRA) && ElytraItem.isUsable(itemStack)) {
+				if (player.isOnGround()) {
+					player.jump();
+					player.tick();
+				}
 
-			player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+				player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+			}
 		}
 	}
 }
