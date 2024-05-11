@@ -1,6 +1,5 @@
 package com.nubqol.utils;
 
-import com.nubqol.NubQol;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -30,8 +29,6 @@ public class PlayerUtils {
 
 	public Entity findMobInPlayerCrosshair(ClientWorld world, ClientPlayerEntity player) {
 		double playerReachDistance = player.getEntityInteractionRange();
-
-		NubQol.LOGGER.info("" + playerReachDistance);
 
 		Vec3d camera = player.getCameraPosVec(1.0F);
 		Vec3d rotation = player.getRotationVec(1.0F);
