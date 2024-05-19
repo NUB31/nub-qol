@@ -2,6 +2,7 @@ package com.nubqol.mixin.client.ignoreStemsWithAxe;
 
 import com.nubqol.NubQol;
 import com.nubqol.NubQolClient;
+import net.minecraft.block.AttachedStemBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StemBlock;
 import net.minecraft.client.MinecraftClient;
@@ -62,7 +63,9 @@ abstract class MinecraftClientMixin {
                 BlockPos blockPos = blockHitResult.getBlockPos();
                 BlockState blockState = world.getBlockState(blockPos);
 
-                if (blockState.getBlock() instanceof StemBlock) {
+                NubQol.LOGGER.info(blockState.getBlock().getName().getString());
+
+                if (blockState.getBlock() instanceof StemBlock || blockState.getBlock() instanceof AttachedStemBlock) {
                     if (player.getMainHandStack().getItem() instanceof AxeItem) {
                         cb.run();
                     }
