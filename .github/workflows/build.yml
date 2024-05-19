@@ -1,45 +1,37 @@
-name: Publish beta on Modrinth
+# Automatically build the project and run any configured tests for every push
+# and submitted pull request. This can help catch issues that only occur on
+# certain platforms or Java versions, and provides a first line of defence
+# against bad commits.
 
-on:
-    push:
-        tags: 
-          - r-*
+name: build
+on: [ pull_request, push ]
 
-permissions:
-    contents: write
-  
-jobs:        
-    publish:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Check Environment Variables
-              run: env
-    
-            - name: Checkout Repository
-              uses: actions/checkout@v3
-              with:
-                  submodules: true
-      
-            - name: Setup Java
-              uses: actions/setup-java@v2
-              with:
-                  distribution: "temurin"
-                  java-version: ${{vars.JAVA_VERSION}}
-
-            - name: Make Gradle Wrapper Executable
-              if: ${{ runner.os != 'Windows' }}
-              run: chmod +x ./gradlew
-            
-            - name: Build
-              run: ./gradlew clean build
-            
-            - name: Publish (Modrinth/GitHub)
-              uses: Kir-Antipov/mc-publish@v3.3
-              with:
-                  modrinth-id: ${{vars.MODRINTH_ID}}
-                  modrinth-token: ${{secrets.MODRINTH_TOKEN}}
-                
-                  name: "${{vars.MOD_NAME}} ${{github.ref_name}}-${{vars.MINECRAFT_VERSION}}"
-                  version-type: release
-                  changelog-file: CHANGELOG.md
-                  java: ${{vars.JAVA_VERSION}}
+jobs:
+  build:
+    strategy:
+      matrix:
+        # Use these Java versions
+        java: [
+          21
+        ]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+      - name: validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v2
+      - name: setup jdk ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'microsoft'
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: build
+        run: ./gradlew build
+      - name: capture build artifacts
+        if: ${{ matrix.java == '21' }} # Only upload artifacts built from latest java
+        uses: actions/upload-artifact@v4
+        with:
+          name: Artifacts
+          path: build/libs/
