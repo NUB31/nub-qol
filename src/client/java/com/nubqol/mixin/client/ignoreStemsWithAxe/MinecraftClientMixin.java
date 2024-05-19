@@ -1,5 +1,6 @@
 package com.nubqol.mixin.client.ignoreStemsWithAxe;
 
+import com.nubqol.NubQol;
 import com.nubqol.NubQolClient;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StemBlock;
@@ -7,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.AxeItem;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -37,6 +39,9 @@ abstract class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "doAttack", cancellable = true)
     private void doAttack(CallbackInfoReturnable<Boolean> cir) {
         isTargetingStemWithAxe(() -> {
+            if (player != null) {
+                player.sendMessage(Text.literal(String.format("%s: The `%s` option is enabled, preventing you from destroying stems with an axe", NubQol.MOD_ID, NubQolClient.CONFIG.ignoreStemsWithAxe.guiConfigEntry().title().getString())));
+            }
             cir.setReturnValue(true);
             cir.cancel();
         });

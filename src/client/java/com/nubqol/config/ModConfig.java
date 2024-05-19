@@ -10,7 +10,7 @@ public class ModConfig extends Config {
 
     public final ClientToggleConfigEntry hitMobsThroughTransparentBlocksEnabled = new ClientToggleConfigEntry(storageProvider, "hitMobsThroughTransparentBlocksEnabled", true, Text.literal("Hit mobs through transparent blocks"), Text.literal("Allows you to hit mobs through non-solid blocks such as sugar cane, tall/non-tall grass, vines etc."));
 
-    public final ClientToggleConfigEntry ignoreStemsWithAxe = new ClientToggleConfigEntry(storageProvider, "ignoreStemsWithAxe", true, Text.literal("Ignore stems when holding axe"), Text.literal("Stops stems such as pumpkin or melon stems from being destroyed when attacking with an axe"));
+    public final ClientToggleConfigEntry ignoreStemsWithAxe = new ClientToggleConfigEntry(storageProvider, "ignoreStemsWithAxe", true, Text.literal("Ignore stems when holding axe"), Text.literal("This option prevents you from destroying stems when holding an axe (Useful for manual pumpkin and melon farming)"));
 
     public ModConfig(IStorageProvider storageProvider) {
         super(storageProvider);
