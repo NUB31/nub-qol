@@ -5,7 +5,8 @@
   "client": [
     "easyElytraLaunch.FireworkRocketItemMixin",
     "easyElytraLaunch.MinecraftClientMixin",
-    "hitMobsThroughTransparentBlocks.MinecraftClientMixin"
+    "hitMobsThroughTransparentBlocks.MinecraftClientMixin",
+    "ignoreStemsWithAxe.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

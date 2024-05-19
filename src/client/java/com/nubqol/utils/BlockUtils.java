@@ -6,23 +6,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class BlockUtils {
-	private final World world;
+    public static boolean hasCollision(World world, HitResult crosshairTarget) {
+        if (crosshairTarget.getType() != HitResult.Type.BLOCK) return false;
 
-	public BlockUtils(World world) {
+        BlockHitResult blockHitResult = (BlockHitResult) crosshairTarget;
+        BlockPos blockPos = blockHitResult.getBlockPos();
 
-		this.world = world;
-	}
+        return hasCollision(world, blockPos);
+    }
 
-	public boolean isSolid(HitResult crosshairTarget) {
-		if (crosshairTarget.getType() != HitResult.Type.BLOCK) return false;
-
-		BlockHitResult blockHitResult = (BlockHitResult) crosshairTarget;
-		BlockPos blockPos = blockHitResult.getBlockPos();
-
-		return world.getBlockState(blockPos).getCollisionShape(world, blockPos).isEmpty();
-	}
-
-	public boolean isSolid(BlockPos blockPos) {
-		return world.getBlockState(blockPos).getCollisionShape(world, blockPos).isEmpty();
-	}
+    public static boolean hasCollision(World world, BlockPos blockPos) {
+        return !world.getBlockState(blockPos).getCollisionShape(world, blockPos).isEmpty();
+    }
 }

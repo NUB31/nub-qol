@@ -1,15 +1,15 @@
-package com.nubqol.mixin.client.hitMobsThroughTransparentBlocks;
+package com.nubqol.mixin.client.ignoreStemsWithAxe;
 
 import com.nubqol.NubQolClient;
-import com.nubqol.utils.BlockUtils;
-import com.nubqol.utils.PlayerUtils;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.StemBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Hand;
+import net.minecraft.item.AxeItem;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,8 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.function.Consumer;
 
 @Mixin(MinecraftClient.class)
 abstract class MinecraftClientMixin {
@@ -35,20 +33,10 @@ abstract class MinecraftClientMixin {
     @Nullable
     public HitResult crosshairTarget;
 
-    @Shadow
-    @Nullable
-    public ClientPlayerInteractionManager interactionManager;
-
     // Runs once when attack key is pressed
     @Inject(at = @At("HEAD"), method = "doAttack", cancellable = true)
     private void doAttack(CallbackInfoReturnable<Boolean> cir) {
-        if (interactionManager == null) return;
-
-        isLookingAtEntityThroughNonSolidBlock(entity -> {
-            interactionManager.attackEntity(player, entity);
-            if (player != null) {
-                player.swingHand(Hand.MAIN_HAND);
-            }
+        isTargetingStemWithAxe(() -> {
             cir.setReturnValue(true);
             cir.cancel();
         });
@@ -57,18 +45,23 @@ abstract class MinecraftClientMixin {
     // Runs every tick
     @Inject(at = @At("HEAD"), method = "handleBlockBreaking", cancellable = true)
     private void handleBlockBreaking(boolean breaking, CallbackInfo ci) {
-        isLookingAtEntityThroughNonSolidBlock(entity -> ci.cancel());
+        isTargetingStemWithAxe(ci::cancel);
     }
 
     @Unique
-    private void isLookingAtEntityThroughNonSolidBlock(Consumer<Entity> cb) {
-        if (!NubQolClient.CONFIG.hitMobsThroughTransparentBlocksEnabled.get()) return;
+    private void isTargetingStemWithAxe(Runnable cb) {
+        if (!NubQolClient.CONFIG.ignoreStemsWithAxe.get()) return;
 
-        if (crosshairTarget != null && player != null && world != null) {
-            if (!BlockUtils.hasCollision(world, crosshairTarget)) {
-                PlayerUtils
-                        .findMobInPlayerCrosshair(player, world)
-                        .ifPresent(cb);
+        if (world != null && player != null) {
+            if (crosshairTarget instanceof BlockHitResult blockHitResult) {
+                BlockPos blockPos = blockHitResult.getBlockPos();
+                BlockState blockState = world.getBlockState(blockPos);
+
+                if (blockState.getBlock() instanceof StemBlock) {
+                    if (player.getMainHandStack().getItem() instanceof AxeItem) {
+                        cb.run();
+                    }
+                }
             }
         }
     }

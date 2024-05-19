@@ -1,6 +1,5 @@
 package com.nubqol.utils;
 
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Tameable;
@@ -15,60 +14,55 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class PlayerUtils {
-	private final PlayerEntity player;
+    public static boolean isHoldingItem(PlayerEntity player, Item item) {
+        return (player.getStackInHand(Hand.MAIN_HAND).getItem() == item || player.getStackInHand(Hand.OFF_HAND).getItem() == item);
+    }
 
-	public PlayerUtils(PlayerEntity player) {
-		this.player = player;
-	}
+    public static Optional<Entity> findMobInPlayerCrosshair(PlayerEntity player, ClientWorld world) {
+        double playerReachDistance = player.getEntityInteractionRange();
 
-	public boolean isHoldingItem(Item item) {
-		return (player.getStackInHand(Hand.MAIN_HAND).getItem() == item || player.getStackInHand(Hand.OFF_HAND).getItem() == item);
-	}
+        Vec3d camera = player.getCameraPosVec(1.0F);
+        Vec3d rotation = player.getRotationVec(1.0F);
 
-	public Entity findMobInPlayerCrosshair(ClientWorld world, ClientPlayerEntity player) {
-		double playerReachDistance = player.getEntityInteractionRange();
+        HitResult hitResult = world.raycast(
+                new RaycastContext(
+                        camera,
+                        camera.add(
+                                rotation.x * playerReachDistance,
+                                rotation.y * playerReachDistance,
+                                rotation.z * playerReachDistance
+                        ),
+                        RaycastContext.ShapeType.COLLIDER,
+                        RaycastContext.FluidHandling.NONE,
+                        player
+                )
+        );
 
-		Vec3d camera = player.getCameraPosVec(1.0F);
-		Vec3d rotation = player.getRotationVec(1.0F);
+        Vec3d end = hitResult.getType() != HitResult.Type.MISS
+                ? hitResult.getPos()
+                : camera.add(
+                rotation.x * playerReachDistance,
+                rotation.y * playerReachDistance,
+                rotation.z * playerReachDistance
+        );
 
-		HitResult hitResult = world.raycast(
-				new RaycastContext(
-						camera,
-						camera.add(
-								rotation.x * playerReachDistance,
-								rotation.y * playerReachDistance,
-								rotation.z * playerReachDistance
-						),
-						RaycastContext.ShapeType.COLLIDER,
-						RaycastContext.FluidHandling.NONE,
-						player
-				)
-		);
+        EntityHitResult result = ProjectileUtil.getEntityCollision(
+                world,
+                player,
+                camera,
+                end,
+                new Box(camera, end),
+                // Don't attack spectators, non-hittable entities and pets of the player
+                entity -> !entity.isSpectator() && entity.canHit() && !(entity instanceof Tameable tameable && Objects.equals(tameable.getOwner(), player))
+        );
 
-		Vec3d end = hitResult.getType() != HitResult.Type.MISS
-				? hitResult.getPos()
-				: camera.add(
-				rotation.x * playerReachDistance,
-				rotation.y * playerReachDistance,
-				rotation.z * playerReachDistance
-		);
-
-		EntityHitResult result = ProjectileUtil.getEntityCollision(
-				world,
-				player,
-				camera,
-				end,
-				new Box(camera, end),
-				// Don't attack spectators, non-hittable entities and pets of the player
-				entity -> !entity.isSpectator() && entity.canHit() && !(entity instanceof Tameable tameable && Objects.equals(tameable.getOwner(), player))
-		);
-
-		if (result != null) {
-			return result.getEntity();
-		} else {
-			return null;
-		}
-	}
+        if (result != null) {
+            return Optional.of(result.getEntity());
+        } else {
+            return Optional.empty();
+        }
+    }
 }
