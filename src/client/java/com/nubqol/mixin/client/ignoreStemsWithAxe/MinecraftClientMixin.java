@@ -63,8 +63,6 @@ abstract class MinecraftClientMixin {
                 BlockPos blockPos = blockHitResult.getBlockPos();
                 BlockState blockState = world.getBlockState(blockPos);
 
-                NubQol.LOGGER.info(blockState.getBlock().getName().getString());
-
                 if (blockState.getBlock() instanceof StemBlock || blockState.getBlock() instanceof AttachedStemBlock) {
                     if (player.getMainHandStack().getItem() instanceof AxeItem) {
                         cb.run();
