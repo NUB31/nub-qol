@@ -6,7 +6,6 @@ import com.nubqol.utils.PlayerUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.Items;
 import net.minecraft.util.hit.HitResult;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,10 +36,10 @@ abstract class MinecraftClientMixin {
             return instance.getType();
         }
 
-        if (this.world.isClient && PlayerUtils.isHoldingItem(player, Items.FIREWORK_ROCKET) && BlockUtils.hasCollision(world, crosshairTarget)) {
+        if (PlayerUtils.canUseEasyElytraLaunch(player) && !BlockUtils.hasCollision(world, crosshairTarget)) {
             return HitResult.Type.MISS;
-        } else {
-            return instance.getType();
         }
+
+        return instance.getType();
     }
 }
