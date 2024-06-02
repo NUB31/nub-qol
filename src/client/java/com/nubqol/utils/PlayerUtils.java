@@ -1,17 +1,11 @@
 package com.nubqol.utils;
 
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.Tameable;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.ElytraItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -27,16 +21,6 @@ public class PlayerUtils {
         return (player.getStackInHand(Hand.MAIN_HAND).getItem() == item || player.getStackInHand(Hand.OFF_HAND).getItem() == item);
     }
 
-    public static boolean canUseEasyElytraLaunch(ClientPlayerEntity player) {
-        ItemStack chestPiece = player.getEquippedStack(EquipmentSlot.CHEST);
-
-        return !player.isFallFlying()
-                && !player.isTouchingWater()
-                && !player.hasStatusEffect(StatusEffects.LEVITATION)
-                && chestPiece.isOf(Items.ELYTRA)
-                && isHoldingItem(player, Items.FIREWORK_ROCKET)
-                && ElytraItem.isUsable(chestPiece);
-    }
 
     public static Optional<Entity> findMobInPlayerCrosshair(PlayerEntity player, ClientWorld world) {
         double playerReachDistance = player.getEntityInteractionRange();

@@ -1,8 +1,7 @@
 package com.nubqol.mixin.client.easyElytraLaunch;
 
-import com.nubqol.NubQolClient;
+import com.nubqol.manager.EELManager;
 import com.nubqol.utils.BlockUtils;
-import com.nubqol.utils.PlayerUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -30,14 +29,10 @@ abstract class MinecraftClientMixin {
     // If using firework rockets and targeting a non-solid block, ignore the non-solid block
     @Redirect(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/hit/HitResult;getType()Lnet/minecraft/util/hit/HitResult$Type;"))
     private HitResult.Type getType(HitResult instance) {
-        if (!NubQolClient.CONFIG.easyElytraLaunchEnabled.get()) return instance.getType();
-
-        if (world == null || player == null || crosshairTarget == null) {
-            return instance.getType();
-        }
-
-        if (PlayerUtils.canUseEasyElytraLaunch(player) && !BlockUtils.hasCollision(world, crosshairTarget)) {
-            return HitResult.Type.MISS;
+        if (world != null && player != null && crosshairTarget != null) {
+            if (EELManager.canUseEEL(player) && !BlockUtils.hasCollision(world, crosshairTarget)) {
+                return HitResult.Type.MISS;
+            }
         }
 
         return instance.getType();

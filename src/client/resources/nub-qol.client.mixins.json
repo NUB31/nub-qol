@@ -3,6 +3,7 @@
   "package": "com.nubqol.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "easyElytraLaunch.ClientPlayerEntityMixin",
     "easyElytraLaunch.FireworkRocketItemMixin",
     "easyElytraLaunch.MinecraftClientMixin",
     "hitMobsThroughTransparentBlocks.MinecraftClientMixin",

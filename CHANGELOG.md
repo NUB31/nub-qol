@@ -1,4 +1,1 @@
-# Changelog
-
-* Fixed inverted if statement causing you to use easy elytra launch when looking at a solid block instead of a non-solid
-  block
+* Changed EEL to use a queue system instead of calling tick. before using the rocket
