@@ -5,7 +5,6 @@
   "client": [
     "easyElytraLaunch.ClientPlayerEntityMixin",
     "easyElytraLaunch.FireworkRocketItemMixin",
-    "easyElytraLaunch.MinecraftClientMixin",
     "hitMobsThroughTransparentBlocks.MinecraftClientMixin",
     "ignoreStemsWithAxe.MinecraftClientMixin"
   ],
