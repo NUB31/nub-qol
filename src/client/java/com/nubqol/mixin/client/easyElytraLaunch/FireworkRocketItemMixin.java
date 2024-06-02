@@ -18,11 +18,7 @@ abstract class FireworkRocketItemMixin {
     @Inject(at = @At("HEAD"), method = "use")
     private void useItem(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         if (world.isClient) {
-            ClientPlayerEntity clientPlayer = (ClientPlayerEntity) player;
-
-            if (EELManager.canUseEEL(clientPlayer)) {
-                EELManager.enqueueEEL(clientPlayer);
-            }
+            EELManager.tryEnqueueEEL((ClientPlayerEntity) player);
         }
     }
 }

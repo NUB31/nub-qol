@@ -1,7 +1,6 @@
 package com.nubqol.manager;
 
 import com.nubqol.NubQolClient;
-import com.nubqol.utils.PlayerUtils;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffects;
@@ -15,8 +14,8 @@ import java.util.Queue;
 public class EELManager {
     public static Queue<QueueItem> QUEUE = new LinkedList<>();
 
-    public static void enqueueEEL(ClientPlayerEntity player) {
-        if (QUEUE.isEmpty()) {
+    public static void tryEnqueueEEL(ClientPlayerEntity player) {
+        if (canUseEEL(player)) {
             if (player.isOnGround()) {
                 QUEUE.add(QueueItem.JUMP);
             }
@@ -33,8 +32,8 @@ public class EELManager {
         return !player.isFallFlying()
                 && !player.isTouchingWater()
                 && !player.hasStatusEffect(StatusEffects.LEVITATION)
+                && QUEUE.isEmpty()
                 && chestPiece.isOf(Items.ELYTRA)
-                && PlayerUtils.isHoldingItem(player, Items.FIREWORK_ROCKET)
                 && ElytraItem.isUsable(chestPiece)
                 && NubQolClient.CONFIG.easyElytraLaunchEnabled.get();
     }

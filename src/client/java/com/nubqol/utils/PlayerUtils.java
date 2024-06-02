@@ -5,8 +5,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.Tameable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.Item;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
@@ -17,11 +15,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class PlayerUtils {
-    public static boolean isHoldingItem(PlayerEntity player, Item item) {
-        return (player.getStackInHand(Hand.MAIN_HAND).getItem() == item || player.getStackInHand(Hand.OFF_HAND).getItem() == item);
-    }
-
-
     public static Optional<Entity> findMobInPlayerCrosshair(PlayerEntity player, ClientWorld world) {
         double playerReachDistance = player.getEntityInteractionRange();
 
