@@ -14,6 +14,17 @@ repositories {
     maven {
         url "https://maven.terraformersmc.com/releases"
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 loom {
@@ -37,7 +48,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modApi files("libs/nub-lib-${nub_lib_version}.jar")
+    modImplementation "maven.modrinth:nub-lib:${nub_lib_version}"
     modApi "com.terraformersmc:modmenu:${project.mod_menu_version}"
 }
 
