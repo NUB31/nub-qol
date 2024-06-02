@@ -1,3 +1,4 @@
 # Changelog
 
-* Removed debug line accidentally left in "client.ignoreStemsWithAxe.MinecraftClientMixin" which resulted in your targeted block getting spammed in logs
+* Fixed inverted if statement causing you to use easy elytra launch when looking at a solid block instead of a non-solid
+  block
