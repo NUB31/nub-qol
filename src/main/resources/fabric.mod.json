@@ -34,7 +34,6 @@
   ],
   "depends": {
     "fabricloader": ">=0.15.11",
-    "nub-lib": ">=1.0.4",
     "minecraft": "1.20.6",
     "java": ">=21",
     "fabric-api": "*"
