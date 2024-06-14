@@ -1,0 +1,9 @@
+{
+  "nub-qol.config.eel_enabled.title": "Easy elytra launch",
+  "nub-qol.config.eel_enabled.description": "Simplifies elytra takeoff by allowing the player to right-click with a firework rocket to launch. This eliminates the need to double-tap the space bar for takeoff, making flight initiation more efficient.",
+  "nub-qol.config.attb_enabled.title": "Attack through transparent blocks",
+  "nub-qol.config.attb_enabled.description": "Allows attacks to pass through non-solid blocks such as grass, tall grass, sugarcane, and flowers, targeting the mob behind or within these blocks. This is particularly useful in biomes with dense vegetation or when working with sugarcane farms.",
+  "nub-qol.config.pswa_enabled.title": "Protect Stems While Using an Axe",
+  "nub-qol.config.pswa_enabled.description": "Prevents the destruction of pumpkin and melon stems when holding an axe. This feature is beneficial for manual pumpkin and melon farming, ensuring stems are not accidentally broken during harvesting.",
+  "nub-qol.config.ui.config_screen.title": "Nub's QOL Options"
+}
