@@ -3,7 +3,10 @@ package com.nubqol.state;
 import com.nubqol.NubQol;
 import com.nubqol.NubQolClient;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.ElytraItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.text.Text;
@@ -143,7 +146,9 @@ public class EELStateMachine {
     }
 
     public void launch() {
-        if (!inProgress && client.player != null && !client.player.isFallFlying()) {
+        if (client.player == null) return;
+        ItemStack itemStack = client.player.getEquippedStack(EquipmentSlot.CHEST);
+        if (!inProgress && !client.player.isFallFlying() && itemStack.isOf(Items.ELYTRA) && ElytraItem.isUsable(itemStack)) {
             shouldInit = true;
             inProgress = true;
         }
