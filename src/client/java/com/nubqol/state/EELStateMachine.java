@@ -1,50 +1,39 @@
 package com.nubqol.state;
 
+import com.nubqol.NubQol;
 import com.nubqol.NubQolClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Hand;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 public class EELStateMachine {
-    @Nullable
     private static volatile EELStateMachine instance;
-    private final ClientPlayerEntity player;
-    private final ClientPlayNetworkHandler networkHandler;
-    private final MinecraftClient minecraftClient;
+    private final MinecraftClient client = MinecraftClient.getInstance();
+    private State lastState = State.IDLE;
     private boolean hasUsedRocket = false;
     private boolean hasJumped = false;
     private boolean hasStartedFlying = false;
     private boolean hasFailed = false;
-    private State currentState = State.IDLE;
+    private boolean shouldInit = false;
+    private boolean inProgress = false;
 
-    private EELStateMachine(ClientPlayerEntity player, ClientPlayNetworkHandler networkHandler, MinecraftClient client) {
-        this.player = player;
-        this.networkHandler = networkHandler;
-        this.minecraftClient = client;
-        reset();
-    }
-
-    public static void createInstance(ClientPlayerEntity player, ClientPlayNetworkHandler networkHandler, MinecraftClient client) {
+    public static EELStateMachine getInstance() {
         if (instance == null) {
             synchronized (EELStateMachine.class) {
                 if (instance == null) {
-                    instance = new EELStateMachine(player, networkHandler, client);
+                    instance = new EELStateMachine();
                 }
             }
         }
+        return instance;
     }
 
-    public static Optional<EELStateMachine> getInstance() {
-        return Optional.ofNullable(instance);
+    private State nextState() {
+        return lastState = getNextState();
     }
 
     private State getNextState() {
@@ -52,88 +41,91 @@ public class EELStateMachine {
             return State.FAILED;
         }
 
-        if (currentState == State.IDLE || currentState == State.FAILED || currentState == State.DONE) {
+        if (shouldInit) {
+            return State.INIT;
+        }
+
+        if (lastState == State.IDLE || lastState == State.FAILED || lastState == State.DONE) {
             return State.IDLE;
         }
 
-        if (currentState == State.INIT) {
-            // The player is already flying
-            // The client will handle this case
-            if (player.isFallFlying()) {
-                return State.DONE;
-            }
+        if (client.player == null) {
+            return fail("Player is null");
         }
 
-        if (player.isOnGround() && !player.isTouchingWater() && !hasJumped) {
+        if (client.player.isTouchingWater()) {
+            return fail("Cannot use easy elytra launch in water");
+        }
+
+        if (client.player.hasStatusEffect(StatusEffects.LEVITATION)) {
+            return fail("Cannot use easy elytra launch when under levitation effect");
+        }
+
+        if (client.player.isOnGround() && !hasJumped) {
             return State.JUMP;
-        } else if (player.isOnGround() && hasJumped) {
-            if (player.isSneaking()) {
-                return fail("Not enough space to jump");
+        } else if (client.player.isOnGround() && hasJumped) {
+            if (!client.player.isSneaking()) {
+                return fail("Unable to jump, try sneaking");
             } else {
-                return fail("Not enough space to jump, try sneaking");
+                return fail("Unable to jump");
             }
         }
 
-        if (!player.isTouchingWater() && !player.isFallFlying() && !hasStartedFlying) {
+        if (!client.player.isFallFlying() && !hasStartedFlying) {
             return State.START_FLYING;
-        } else if (!player.isFallFlying() && !hasStartedFlying) {
-            if (player.isTouchingWater()) {
-                return fail("Cannot initiate flight mode underwater");
-            } else if (player.hasStatusEffect(StatusEffects.LEVITATION)) {
-                return fail("Cannot initiate flight mode when under the levitation effect");
-            } else {
-                return fail("Fly attempt failed");
-            }
+        } else if (!client.player.isFallFlying() && hasStartedFlying) {
+            return fail("Flight attempt failed");
         }
 
-        if (player.isFallFlying() && !hasUsedRocket && player.isHolding(Items.FIREWORK_ROCKET)) {
+        if (client.player.isFallFlying() && !hasUsedRocket && client.player.isHolding(Items.FIREWORK_ROCKET)) {
             return State.USE_ROCKET;
-        } else if (player.isFallFlying() && !hasUsedRocket && !player.isHolding(Items.FIREWORK_ROCKET)) {
+        } else if (client.player.isFallFlying() && !hasUsedRocket && !client.player.isHolding(Items.FIREWORK_ROCKET)) {
             return fail("You are not holding a firework rocket");
         }
 
-        if (player.isFallFlying() && hasUsedRocket) {
+        if (client.player.isFallFlying() && hasUsedRocket) {
             return State.DONE;
         }
 
-        return fail();
+        return fail("Something unexpected happened when using easy elytra launch");
+    }
+
+    private State fail(String errorMessage) {
+        hasFailed = true;
+        if (client.player != null && errorMessage != null && NubQolClient.CONFIG.EELMessagesEnabled.get()) {
+            client.player.sendMessage(Text.translatable("nub-qol.error_message", errorMessage).withColor(Colors.LIGHT_YELLOW));
+        }
+        NubQol.LOGGER.warn(String.format("Easy elytra launch failed with message: %s", errorMessage));
+        return State.IDLE;
     }
 
     private void jump() {
-        player.jump();
+        if (client.player != null) {
+            client.player.jump();
+        }
         hasJumped = true;
     }
 
-    private State fail() {
-        return fail(null);
-    }
-
-    private State fail(@Nullable String errorMessage) {
-        hasFailed = true;
-        if (errorMessage != null && NubQolClient.CONFIG.EELMessagesEnabled.get()) {
-            player.sendMessage(Text.translatable("nub-qol.error_message", errorMessage).withColor(Colors.LIGHT_YELLOW));
-        }
-        return State.FAILED;
-    }
-
     private void startFlying() {
-        networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+        if (client.player != null) {
+            client.player.networkHandler.sendPacket(new ClientCommandC2SPacket(client.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+            client.player.startFallFlying();
+        }
         hasStartedFlying = true;
     }
 
     private void useRocket() {
-        if (minecraftClient.interactionManager != null) {
-            Hand hand = player.getMainHandStack().isOf(Items.FIREWORK_ROCKET)
+        if (client.interactionManager != null && client.player != null) {
+            Hand hand = client.player.getMainHandStack().isOf(Items.FIREWORK_ROCKET)
                     ? Hand.MAIN_HAND
-                    : player.getOffHandStack().isOf(Items.FIREWORK_ROCKET)
+                    : client.player.getOffHandStack().isOf(Items.FIREWORK_ROCKET)
                     ? Hand.OFF_HAND
                     : null;
 
             if (hand != null) {
-                minecraftClient.interactionManager.interactItem(player, hand);
+                client.interactionManager.interactItem(client.player, hand);
             }
         }
-
         hasUsedRocket = true;
     }
 
@@ -142,15 +134,24 @@ public class EELStateMachine {
         hasJumped = false;
         hasStartedFlying = false;
         hasFailed = false;
+        shouldInit = false;
+        inProgress = false;
+    }
+
+    private void init() {
+        shouldInit = false;
     }
 
     public void launch() {
-        currentState = State.INIT;
+        if (!inProgress && client.player != null && !client.player.isFallFlying()) {
+            shouldInit = true;
+            inProgress = true;
+        }
     }
 
     public void tick() {
-        currentState = getNextState();
-        switch (currentState) {
+        switch (nextState()) {
+            case INIT -> init();
             case JUMP -> jump();
             case START_FLYING -> startFlying();
             case USE_ROCKET -> useRocket();

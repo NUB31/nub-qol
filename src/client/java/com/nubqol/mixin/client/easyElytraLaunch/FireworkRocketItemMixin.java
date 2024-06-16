@@ -18,7 +18,7 @@ abstract class FireworkRocketItemMixin {
     @Inject(at = @At("HEAD"), method = "use")
     private void useItem(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         if (world.isClient && NubQolClient.CONFIG.EELEnabled.get()) {
-            EELStateMachine.getInstance().ifPresent(EELStateMachine::launch);
+            EELStateMachine.getInstance().launch();
         }
     }
 }
