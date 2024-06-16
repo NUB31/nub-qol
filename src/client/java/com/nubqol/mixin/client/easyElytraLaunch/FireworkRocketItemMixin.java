@@ -1,7 +1,7 @@
 package com.nubqol.mixin.client.easyElytraLaunch;
 
-import com.nubqol.manager.EELManager;
-import net.minecraft.client.network.ClientPlayerEntity;
+import com.nubqol.NubQolClient;
+import com.nubqol.state.EELStateMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 abstract class FireworkRocketItemMixin {
     @Inject(at = @At("HEAD"), method = "use")
     private void useItem(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
-        if (world.isClient) {
-            EELManager.tryEnqueueEEL((ClientPlayerEntity) player);
+        if (world.isClient && NubQolClient.CONFIG.EELEnabled.get()) {
+            EELStateMachine.getInstance().ifPresent(EELStateMachine::launch);
         }
     }
 }

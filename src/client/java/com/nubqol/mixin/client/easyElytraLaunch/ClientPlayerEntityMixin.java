@@ -1,13 +1,9 @@
 package com.nubqol.mixin.client.easyElytraLaunch;
 
-import com.nubqol.manager.EELManager;
+import com.nubqol.state.EELStateMachine;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,30 +26,13 @@ public class ClientPlayerEntityMixin {
         return (ClientPlayerEntity) (Object) this;
     }
 
+    @Inject(at = @At("HEAD"), method = "init")
+    private void init(CallbackInfo ci) {
+        EELStateMachine.createInstance(me(), networkHandler, client);
+    }
+
     @Inject(at = @At("HEAD"), method = "tick")
     private void tick(CallbackInfo ci) {
-        EELManager.QueueItem currentQueue = EELManager.QUEUE.poll();
-
-        if (currentQueue == null) return;
-        switch (currentQueue) {
-            case JUMP -> {
-                me().jump();
-            }
-            case START_FALL_FLYING -> {
-                networkHandler.sendPacket(new ClientCommandC2SPacket(me(), ClientCommandC2SPacket.Mode.START_FALL_FLYING));
-            }
-            case USE_ROCKET -> {
-                if (client.interactionManager != null) {
-                    ItemStack mainHandStack = me().getMainHandStack();
-                    ItemStack offHandStack = me().getOffHandStack();
-
-                    if (mainHandStack.getItem() == Items.FIREWORK_ROCKET) {
-                        client.interactionManager.interactItem(me(), Hand.MAIN_HAND);
-                    } else if (offHandStack.getItem() == Items.FIREWORK_ROCKET) {
-                        client.interactionManager.interactItem(me(), Hand.OFF_HAND);
-                    }
-                }
-            }
-        }
+        EELStateMachine.getInstance().ifPresent(EELStateMachine::tick);
     }
 }

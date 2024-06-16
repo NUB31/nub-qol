@@ -19,7 +19,7 @@ public class NubQolClient implements ClientModInitializer {
         return ConfigScreen
                 .builder()
                 .setParent(parent)
-                .fromConfig(Text.literal("Nub's QoL Options"), NubQolClient.CONFIG)
+                .fromConfig(Text.translatable("nub-qol.config.ui.config_screen.title"), NubQolClient.CONFIG)
                 .onSave(NubQolClient.CONFIG::save)
                 .build();
     }
