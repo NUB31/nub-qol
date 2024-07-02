@@ -14,16 +14,8 @@ repositories {
     maven {
         url "https://maven.terraformersmc.com/releases"
     }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Modrinth"
-                url = "https://api.modrinth.com/maven"
-            }
-        }
-        filter {
-            includeGroup "maven.modrinth"
-        }
+    flatDir {
+        dirs("libs")
     }
 }
 
@@ -49,8 +41,8 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // Include nub-lib
-    include "maven.modrinth:nub-lib:${project.nub_lib_version}"
-    modImplementation "maven.modrinth:nub-lib:${project.nub_lib_version}"
+    modImplementation ":nub-lib:${project.nub_lib_version}"
+    include ":nub-lib:${project.nub_lib_version}"
 
     modApi "com.terraformersmc:modmenu:${project.mod_menu_version}"
 }

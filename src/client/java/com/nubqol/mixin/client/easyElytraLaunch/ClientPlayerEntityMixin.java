@@ -9,10 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
 public class ClientPlayerEntityMixin {
-    @Inject(at = @At("HEAD"), method = "init")
-    private void init(CallbackInfo ci) {
-    }
-
     @Inject(at = @At("HEAD"), method = "tick")
     private void tick(CallbackInfo ci) {
         EELStateMachine.getInstance().tick();
