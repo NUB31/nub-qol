@@ -1,8 +1,8 @@
 package com.nubqol.config;
 
 import com.nublib.config.Config;
-import com.nublib.config.entry.ClientToggleConfigEntry;
-import com.nublib.config.entry.IClientConfigEntry;
+import com.nublib.config.entry.BooleanConfigEntry;
+import com.nublib.config.entry.IConfigEntry;
 import com.nublib.config.provider.IStorageProvider;
 import com.nublib.gui.ConfigScreen;
 import com.nubqol.NubQolClient;
@@ -11,10 +11,10 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 public class ModConfig extends Config {
-    public final IClientConfigEntry<Boolean> EELEnabled = new ClientToggleConfigEntry(sp, "easyElytraLaunchEnabled", true, Text.translatable("nub-qol.config.eel_enabled.title"), Text.translatable("nub-qol.config.eel_enabled.description"));
-    public final IClientConfigEntry<Boolean> EELMessagesEnabled = new ClientToggleConfigEntry(sp, "easyElytraLaunchMessagesEnabled.", false, Text.translatable("nub-qol.config.eel_messages_enabled.title"), Text.translatable("nub-qol.config.eel_messages_enabled.description"));
-    public final IClientConfigEntry<Boolean> hitMobsThroughTransparentBlocksEnabled = new ClientToggleConfigEntry(sp, "hitMobsThroughTransparentBlocksEnabled", true, Text.translatable("nub-qol.config.attb_enabled.title"), Text.translatable("nub-qol.config.attb_enabled.description"));
-    public final IClientConfigEntry<Boolean> ignoreStemsWithAxe = new ClientToggleConfigEntry(sp, "ignoreStemsWithAxe", true, Text.translatable("nub-qol.config.pswa_enabled.title"), Text.translatable("nub-qol.config.pswa_enabled.description"));
+    public final IConfigEntry<Boolean> EELEnabled = new BooleanConfigEntry(sp, "easyElytraLaunchEnabled", true);
+    public final IConfigEntry<Boolean> EELMessagesEnabled = new BooleanConfigEntry(sp, "easyElytraLaunchMessagesEnabled", false);
+    public final IConfigEntry<Boolean> hitMobsThroughTransparentBlocksEnabled = new BooleanConfigEntry(sp, "hitMobsThroughTransparentBlocksEnabled", true);
+    public final IConfigEntry<Boolean> ignoreStemsWithAxe = new BooleanConfigEntry(sp, "ignoreStemsWithAxe", true);
 
     public ModConfig(IStorageProvider storageProvider) {
         super(storageProvider);
@@ -27,14 +27,22 @@ public class ModConfig extends Config {
                 .addPage(Text.translatable("nub-qol.config.ui.config_screen.title"), page -> page
                         .addEntries(entryList -> entryList
                                 .addToggle(EELEnabled.get(), builder -> builder
-                                        .setTitle(EELEnabled.guiConfigEntry().title())
-                                        .setDescription(EELEnabled.guiConfigEntry().description())
+                                        .setTitle(Text.translatable("nub-qol.config.eel_enabled.title"))
+                                        .setDescription(Text.translatable("nub-qol.config.eel_enabled.description"))
                                         .onChange(EELEnabled::set)
-                                        .addChildEntries(childEntryList -> {
-                                            childEntryList.fromConfigEntry(EELMessagesEnabled);
-                                        }))
-                                .fromConfigEntry(hitMobsThroughTransparentBlocksEnabled)
-                                .fromConfigEntry(ignoreStemsWithAxe)
+                                        .addChildEntries(childEntryList -> childEntryList
+                                                .addToggle(EELMessagesEnabled.get(), toggleBuilder -> toggleBuilder
+                                                        .setTitle(Text.translatable("nub-qol.config.eel_messages_enabled.title"))
+                                                        .setDescription(Text.translatable("nub-qol.config.eel_messages_enabled.description"))
+                                                        .onChange(EELMessagesEnabled::set))))
+                                .addToggle(hitMobsThroughTransparentBlocksEnabled.get(), toggleBuilder -> toggleBuilder
+                                        .setTitle(Text.translatable("nub-qol.config.attb_enabled.title"))
+                                        .setDescription(Text.translatable("nub-qol.config.attb_enabled.description"))
+                                        .onChange(hitMobsThroughTransparentBlocksEnabled::set))
+                                .addToggle(ignoreStemsWithAxe.get(), toggleBuilder -> toggleBuilder
+                                        .setTitle(Text.translatable("nub-qol.config.pswa_enabled.title"))
+                                        .setDescription(Text.translatable("nub-qol.config.pswa_enabled.description"))
+                                        .onChange(ignoreStemsWithAxe::set))
                         ))
                 .onSave(NubQolClient.CONFIG::save)
                 .build();
