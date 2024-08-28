@@ -41,7 +41,7 @@ abstract class MinecraftClientMixin {
     private void doAttack(CallbackInfoReturnable<Boolean> cir) {
         isTargetingStemWithAxe(() -> {
             if (player != null) {
-                player.sendMessage(Text.literal(String.format("%s: The `%s` option is enabled, preventing you from destroying stems with an axe", NubQol.MOD_ID, NubQolClient.CONFIG.ignoreStemsWithAxe.guiConfigEntry().title().getString())));
+                player.sendMessage(Text.literal(String.format("%s: The `%s` option is enabled, preventing you from destroying stems with an axe", NubQol.MOD_ID, Text.translatable("nub-qol.config.pswa_enabled.title").getString())));
             }
             cir.setReturnValue(true);
             cir.cancel();
